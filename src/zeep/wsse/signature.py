@@ -55,6 +55,7 @@ class MemorySignature:
         password=None,
         signature_method=None,
         digest_method=None,
+        signature_verification_cert_data=None,
     ):
         check_xmlsec_import()
 
@@ -63,6 +64,7 @@ class MemorySignature:
         self.password = password
         self.digest_method = digest_method
         self.signature_method = signature_method
+        self.signature_verification_cert_data = signature_verification_cert_data if signature_verification_cert_data is not None else cert_data
 
     def apply(self, envelope, headers):
         key = _make_sign_key(self.key_data, self.cert_data, self.password)
@@ -72,7 +74,7 @@ class MemorySignature:
         return envelope, headers
 
     def verify(self, envelope):
-        key = _make_verify_key(self.cert_data)
+        key = _make_verify_key(self.signature_verification_cert_data)
         _verify_envelope_with_key(envelope, key)
         return envelope
 
@@ -87,6 +89,7 @@ class Signature(MemorySignature):
         password=None,
         signature_method=None,
         digest_method=None,
+        signature_verification_file=None,
     ):
         super().__init__(
             _read_file(key_file),
@@ -94,6 +97,7 @@ class Signature(MemorySignature):
             password,
             signature_method,
             digest_method,
+            _read_file(signature_verification_file if signature_verification_file is not None else certfile)
         )
 
 
