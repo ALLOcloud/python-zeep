@@ -16,6 +16,7 @@ from lxml.etree import QName
 from zeep import ns
 from zeep.exceptions import SignatureVerificationFailed
 from zeep.utils import detect_soap_env
+from zeep.wsse import utils
 from zeep.wsse.utils import ensure_id, get_security_header
 
 try:
