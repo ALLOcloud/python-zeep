@@ -8,6 +8,8 @@ admittedly painful, will likely assist in understanding the code in this
 module.
 
 """
+from datetime import datetime, timedelta
+
 from lxml import etree
 from lxml.etree import QName
 
@@ -104,6 +106,27 @@ class BinarySignature(Signature):
         _sign_envelope_with_key_binary(
             envelope, key, self.signature_method, self.digest_method
         )
+        return envelope, headers
+
+
+class BinarySignatureTimestamp(BinarySignature):
+    def apply(self, envelope, headers):
+        security = utils.get_security_header(envelope)
+
+        created = datetime.utcnow()
+        expired = created + timedelta(seconds=5 * 60)
+
+        timestamp = utils.WSU("Timestamp")
+        timestamp.append(
+            utils.WSU("Created", created.replace(microsecond=0).isoformat() + "Z")
+        )
+        timestamp.append(
+            utils.WSU("Expires", expired.replace(microsecond=0).isoformat() + "Z")
+        )
+
+        security.append(timestamp)
+
+        super().apply(envelope, headers)
         return envelope, headers
 
 
