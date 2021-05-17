@@ -252,7 +252,7 @@ def _signature_prepare(envelope, key, signature_method, digest_method):
     signature = xmlsec.template.create(
         envelope,
         xmlsec.Transform.EXCL_C14N,
-        signature_method or xmlsec.Transform.RSA_SHA1,
+        signature_method or xmlsec.Transform.RSA_SHA256,
     )
 
     # Add a KeyInfo node with X509Data child to the Signature. XMLSec will fill
@@ -385,7 +385,7 @@ def _sign_node(ctx, signature, target, digest_method=None):
 
     # Add reference to signature with URI attribute pointing to that ID.
     ref = xmlsec.template.add_reference(
-        signature, digest_method or xmlsec.Transform.SHA1, uri="#" + node_id
+        signature, digest_method or xmlsec.Transform.SHA256, uri="#" + node_id
     )
     # This is an XML normalization transform which will be performed on the
     # target node contents before signing. This ensures that changes to
