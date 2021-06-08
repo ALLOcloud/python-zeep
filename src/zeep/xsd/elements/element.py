@@ -225,7 +225,7 @@ class Element(Base):
         assert parent is not None
         self.validate(value, render_path)
 
-        if self.accepts_multiple and isinstance(value, list):
+        if isinstance(value, list):
             for val in value:
                 self._render_value_item(parent, val, render_path)
         else:
